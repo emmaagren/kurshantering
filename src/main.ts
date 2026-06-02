@@ -38,13 +38,13 @@ function renderCourses(): void {
       document.createElement("li");
 
     li.innerHTML = `
-    <strong>${course.code}</strong
+    <strong>${course.code}</strong>
     - ${course.name}
     (${course.progression})
     <a href="${course.syllabus}" target="_blank">
     Kursplan
     </a>
-    button data-code="${course.code}">
+    <button data-code="${course.code}">
     Radera
     </button>
     `;
@@ -52,3 +52,94 @@ function renderCourses(): void {
     courseList.appendChild(li);
   });
 }
+
+//Lägg till kurs.
+
+function addCourse(course: CourseInfo): void {
+
+  const exists: boolean =
+    courses.some(
+      (c: CourseInfo) => c.code === course.code
+    );
+
+  if (exists) {
+    alert("Kurskoden finns redan.");
+    return;
+  }
+
+  courses.push(course);
+
+  saveCourses();
+  renderCourses();
+}
+
+//Radera kurs.
+
+function deleteCourse(code: string): void {
+
+  courses = courses.filter(
+    (course: CourseInfo) => course.code !== code
+  );
+
+  saveCourses();
+  renderCourses();
+}
+
+//Formulär.
+
+const form =
+  document.getElementById("courseForm")
+as: HTMLFormElement;
+
+form.addEventListener("submit",
+  (event: SubmitEvent) => {
+
+    event.preventDefault();
+
+    const code =
+     (document.getElementById("code") as HTMLInputElement).value;
+
+  const name =
+  (document.getElementById("name") as HTMLInputElement).value;
+
+const progression =
+  (document.getElementById("progression") as HTMLInputElement).value as "A" | "B" | "C";
+
+const syllabus =
+(document.getElementById("syllabus") as HTMLInputElement).value;
+
+const newCourse: CourseInfo = {
+  code,
+  name,
+  progression,
+  syllabus
+};
+
+addCourse(newCourse);
+
+form.reset();
+
+  });
+
+  //Klick på radera.
+
+  document.addEventListener("click",
+    (event: MouseEvent) => {
+
+      const target = event.target as HTMLElement;
+
+      if (target.tagName === "BUTTON") {
+
+        const code =
+        target.getAttribute("data-code");
+
+        if(code) {
+          deleteCourse(code);
+        }
+      }
+    });
+
+//Starta appen
+
+loadCourses();
+renderCourses();
