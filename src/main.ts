@@ -1,5 +1,5 @@
-import './style.css'
-import { CourseInfo } from './interfaces'
+import './style.css';
+import type { CourseInfo } from './interfaces';
 
 let courses: CourseInfo[] = [];
 
@@ -11,15 +11,12 @@ function loadCourses(): void {
     localStorage.getItem("courses");
 
   if (storedCourses) {
-    courses = JSON.parse(storedCourses);
+    courses = JSON.parse(storedCourses) as CourseInfo[];
   }
 }
 
 function saveCourses(): void {
-  localStorage.setItem(
-    "courses",
-    JSON.stringify(courses)
-  );
+  localStorage.setItem("courses", JSON.stringify(courses));
 }
 
 
@@ -32,19 +29,25 @@ function renderCourses(): void {
 
   courseList.innerHTML = "";
 
+  if (courses.length === 0) {
+    courseList.innerHTML = "<li class='empty'>Inga kurser tillagda ännu.</li>";
+    return;
+  }
+
   courses.forEach((course: CourseInfo) => {
 
     const li: HTMLLIElement =
       document.createElement("li");
 
     li.innerHTML = `
+    <div>
     <strong>${course.code}</strong>
-    - ${course.name}
-    (${course.progression})
-    <a href="${course.syllabus}" target="_blank">
-    Kursplan
-    </a>
-    <button data-code="${course.code}">
+    <p>${course.name}</p>
+    <p>Progression: (${course.progression})</p>
+    <a href="${course.syllabus}" target="_blank">Visa kursplan</a>
+    </div>
+
+    <button class="delete-btn" data-code="${course.code}">
     Radera
     </button>
     `;
@@ -88,8 +91,7 @@ function deleteCourse(code: string): void {
 //Formulär.
 
 const form =
-  document.getElementById("courseForm")
-as: HTMLFormElement;
+  document.getElementById("courseForm") as HTMLFormElement;
 
 form.addEventListener("submit",
   (event: SubmitEvent) => {
@@ -103,7 +105,7 @@ form.addEventListener("submit",
   (document.getElementById("name") as HTMLInputElement).value;
 
 const progression =
-  (document.getElementById("progression") as HTMLInputElement).value as "A" | "B" | "C";
+  (document.getElementById("progression") as HTMLSelectElement).value as "A" | "B" | "C";
 
 const syllabus =
 (document.getElementById("syllabus") as HTMLInputElement).value;
