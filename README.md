@@ -36,7 +36,7 @@ Projektet är utvecklat med:
 
 ## Publicerad webbplats
 
-
+https://kurshantering.netlify.app/
 
 ## GitHub-repository
 
